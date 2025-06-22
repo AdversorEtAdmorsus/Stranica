@@ -1,6 +1,11 @@
 <?php
 include 'connect.php';
-$sql = "SELECT * FROM articles WHERE archive=1 ORDER BY created_at DESC";
+$category = isset($_GET['category']) ? $conn->real_escape_string($_GET['category']) : '';
+$sql = "SELECT * FROM articles WHERE archive=1";
+if ($category) {
+    $sql .= " AND category='$category'";
+}
+$sql .= " ORDER BY created_at DESC";
 $result = $conn->query($sql);
 ?>
 <!DOCTYPE html>
@@ -32,36 +37,11 @@ $result = $conn->query($sql);
             </ul>
         </nav>
     </header>
-    <main class="main-container">
-        <div style="margin-bottom: 0;">
-            <span style="color:#1e293b;font-family:'Times New Roman', Times, serif;font-weight:400;font-size:1.5rem;letter-spacing:1px;">SPORT</span>
-        </div>
+    <main>
+        <h2 class="page-title">Vijesti iz kategorije: <?php echo htmlspecialchars($category); ?></h2>
         <section class="news-gallery">
             <div class="gallery-grid">
-                <?php 
-                $result = $conn->query("SELECT * FROM articles WHERE archive=1 AND category='sport' ORDER BY created_at DESC");
-                while($row = $result->fetch_assoc()): ?>
-                <div class="news-item">
-                    <a href="clanak.php?id=<?php echo $row['id']; ?>">
-                        <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="Slika vijesti">
-                        <h3 style="color:#64748b;font-size:1.2rem;margin:8px 0 0 0;display:block;font-weight:400;text-decoration:none;"><?php echo htmlspecialchars($row['title']); ?></h3>
-                    </a>
-                </div>
-                <?php endwhile; ?>
-            </div>
-        </section>`
-      
-            <hr style="border: none; border-top: 2px solid rgb(89, 91, 94); margin: 8px 0 18px 0; width: 100%;">
-
-        <div style="margin: 38px 0 0 0;">
-            <span style="color:#1e293b;font-family:'Times New Roman', Times, serif;font-weight:400;font-size:1.5rem;letter-spacing:1px;">EUROPA</span>
-        </div>
-        
-        <section class="news-gallery">
-            <div class="gallery-grid">
-                <?php 
-                $result = $conn->query("SELECT * FROM articles WHERE archive=1 AND category='europa' ORDER BY created_at DESC");
-                while($row = $result->fetch_assoc()): ?>
+                <?php while($row = $result->fetch_assoc()): ?>
                 <div class="news-item">
                     <a href="clanak.php?id=<?php echo $row['id']; ?>">
                         <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="Slika vijesti">
@@ -75,5 +55,25 @@ $result = $conn->query($sql);
     <footer>
         <p>&copy; 2025 El Confidencial</p>
     </footer>
+    <style>
+    html, body {
+        height: 100%;
+    }
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    main {
+        flex: 1 0 auto;
+    }
+    footer {
+        flex-shrink: 0;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+        margin-top: 0;
+    }
+    </style>
 </body>
 </html>
